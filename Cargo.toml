@@ -1,8 +1,11 @@
-[package]
-name = "backlogger_server"
+[workspace]
+resolver = "2"
+
+members = [
+    "packages/*",
+]
+
+[workspace.package]
 version = "0.1.0"
-edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
+authors = ["José Miguel Sarasola <alosarjos@gmail.com>"]
+description = "Backend server for BackLogger project"
