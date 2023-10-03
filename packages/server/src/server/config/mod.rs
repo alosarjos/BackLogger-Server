@@ -4,6 +4,15 @@ pub struct Config {
     port: usize,
 }
 
+impl Default for Config {
+    fn default() -> Self {
+        Self {
+            host: String::from("0.0.0.0"),
+            port: 3000,
+        }
+    }
+}
+
 impl Config {
     pub fn new(host: &str, port: usize) -> Self {
         Self {

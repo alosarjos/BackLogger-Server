@@ -12,9 +12,14 @@ pub struct Server {
     pub axum_server: AxumServer<AddrIncoming, IntoMakeService<axum::Router>>,
 }
 
+impl Default for Server {
+    fn default() -> Self {
+        Self::new(Config::default(), Router::default())
+    }
+}
+
 impl Server {
-    pub fn new(config: Config) -> Self {
-        let router = Router::new();
+    pub fn new(config: Config, router: Router) -> Self {
         let address = format!("{}:{}", config.host(), config.port());
 
         let axum_server =
