@@ -1,7 +1,7 @@
 use backlogger_server::server::Server;
 
 #[tokio::main]
-async fn main() -> Result<(), hyper::Error> {
+async fn main() -> Result<(), std::io::Error> {
     let server = Server::default();
-    server.run().await
+    server.run(None).await
 }

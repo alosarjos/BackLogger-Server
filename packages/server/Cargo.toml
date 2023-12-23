@@ -13,8 +13,8 @@ path = "src/main.rs"
 name = "backlogger_server"
 
 [dependencies]
-axum = "0.6.20"
-hyper = "0.14.27"
+axum = "0.7.0"
+hyper = "1.0"
 tokio = { version = "1.32.0", features = ["macros", "rt-multi-thread"] }
 
 [dev-dependencies]

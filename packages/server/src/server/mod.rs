@@ -1,7 +1,6 @@
 use self::{config::Config, router::Router};
 
-use axum::{routing::IntoMakeService, Server as AxumServer};
-use hyper::server::conn::AddrIncoming;
+use tokio::net::TcpListener;
 
 pub mod config;
 pub mod controller;
@@ -9,29 +8,36 @@ pub mod router;
 
 pub struct Server {
     pub config: Config,
-    pub axum_server: AxumServer<AddrIncoming, IntoMakeService<axum::Router>>,
+    pub router: Router,
 }
 
 impl Default for Server {
     fn default() -> Self {
-        Self::new(Config::default(), Router::default())
+        Self {
+            config: Default::default(),
+            router: Default::default(),
+        }
     }
 }
 
 impl Server {
     pub fn new(config: Config, router: Router) -> Self {
-        let address = format!("{}:{}", config.host(), config.port());
-
-        let axum_server =
-            AxumServer::bind(&address.parse().unwrap()).serve(router.get_as_service());
-
         Self {
             config,
-            axum_server,
+            router,
         }
     }
 
-    pub async fn run(self) -> Result<(), hyper::Error> {
-        self.axum_server.await
+    pub async fn run(self, notifier: Option<tokio::sync::oneshot::Sender<bool>>) -> Result<(), std::io::Error> {
+        let address = format!("{}:{}", self.config.host(), self.config.port());
+        let listener = TcpListener::bind(address).await?;
+        let server = axum::serve(listener, self.router.get_as_service());
+
+        if let Some(notifier) = notifier {
+            notifier.send(true).expect("Could not send the message");
+        }
+
+        server.await.unwrap();
+        Ok(())
     }
 }
